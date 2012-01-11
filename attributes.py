@@ -21,7 +21,7 @@ class JSONStringAttribute(JSONAttribute):
 
     def to_python(self, value):
         self._assert_attr_class(value, basestring)
-        return value
+        return unicode(value)
 
 class JSONIntegerAttribute(JSONAttribute):
     def default_value(self):

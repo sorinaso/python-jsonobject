@@ -30,7 +30,7 @@ class JSONObject():
             try:
                 setattr(self, k , v.to_python(a_dict[k]))
             except AttributeError:
-                raise JSONObjectError('El atributo %s no existe '
+                raise JSONObjectError('El atributo json(%s) no existe '
                                       'en el objeto %s', (k, self.__dict__))
 
     def decode(self, json):
@@ -43,6 +43,8 @@ class JSONObject():
         for k, v in self._json_attrs.items():
             a = getattr(self, k)
             if isinstance(v, JSONStringAttribute):
+                enc_dict[k] = unicode(a)
+            if isinstance(v, JSONIntegerAttribute):
                 enc_dict[k] = a
             elif isinstance(v, JSONObjectAttribute):
                 enc_dict[k] = a.build_dict()
