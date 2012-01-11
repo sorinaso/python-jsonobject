@@ -1,0 +1,3 @@
+class JSONObjectError(Exception):
+    pass
+
