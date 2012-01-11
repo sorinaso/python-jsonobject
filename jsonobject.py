@@ -1,7 +1,5 @@
 from json import loads, dumps
 from attributes import *
-from decoder import JSONObjectDecoder
-from encoder import JSONObjectEncoder
 
 class JSONObjectBuilder(type):
     """
@@ -22,7 +20,7 @@ class JSONObjectBuilder(type):
         return new_cls
 
 
-class JSONObject(JSONObjectEncoder, JSONObjectDecoder):
+class JSONObject():
     __metaclass__ = JSONObjectBuilder
 
     def decode_dict(self, a_dict):
