@@ -26,7 +26,7 @@ class JSONObject():
 
     def decode_dict(self, a_dict):
         '''Decodifica el diccionario sacado a partir de json
-        al objeto.'''
+        en el objeto.'''
         for k,v in self._json_attrs.items():
             try:
                 setattr(self, k , v.to_object_attribute(a_dict[k]))
@@ -39,6 +39,7 @@ class JSONObject():
         self.decode_dict(loads(json))
 
     def build_dict(self):
+        '''Convierte un diccionario para luego serializarlo a json.'''
         enc_dict = {}
 
         for k, v in self._json_attrs.items():
@@ -48,4 +49,5 @@ class JSONObject():
         return enc_dict
 
     def encode(self):
+        '''Codifica el objeto a json.'''
         return dumps(self.build_dict())
