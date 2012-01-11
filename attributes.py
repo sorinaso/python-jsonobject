@@ -23,6 +23,14 @@ class JSONStringAttribute(JSONAttribute):
         self._assert_attr_class(value, basestring)
         return value
 
+class JSONIntegerAttribute(JSONAttribute):
+    def default_value(self):
+        return None
+
+    def to_python(self, value):
+        self._assert_attr_class(value, int)
+        return value
+
 class JSONObjectAttribute(JSONAttribute):
     def __init__(self, obj_class):
         self.obj_class = obj_class
