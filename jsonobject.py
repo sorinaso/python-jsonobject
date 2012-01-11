@@ -8,11 +8,12 @@ class JSONObjectBuilder(type):
     """
     def __new__(cls, name, bases, attrs):
         new_cls = super(JSONObjectBuilder, cls).__new__(cls, name, bases, attrs)
-        json_fields = JSONAttributes()
+        json_fields = {}
         
         for k,v in attrs.items():
             if isinstance(v, JSONAttribute):
                 json_fields[k] = v
+                v.set_name(k)
                 setattr(new_cls, k, v.default_value())
 
         setattr(new_cls, '_json_attrs', json_fields)
@@ -42,17 +43,8 @@ class JSONObject():
 
         for k, v in self._json_attrs.items():
             a = getattr(self, k)
-            if isinstance(v, JSONStringAttribute):
-                enc_dict[k] = unicode(a)
-            if isinstance(v, JSONIntegerAttribute):
-                enc_dict[k] = a
-            elif isinstance(v, JSONObjectAttribute):
-                enc_dict[k] = a.build_dict()
-            elif isinstance(v, JSONListAttribute):
-                enc_dict[k] = []
-                for e in a:
-                    enc_dict[k].append(e.build_dict())
-
+            enc_dict[k] = v.to_dict_value(a)
+            
         return enc_dict
 
     def encode(self):

@@ -4,31 +4,52 @@ class JSONAttributeError(Exception):
     pass
 
 class JSONAttribute(object):
-    def _assert_attr_class(self, var, cls):
-        if not isinstance(var, cls):
-            raise JSONAttributeError(
-                'El atributo %s no es del tipo %s' % (var,cls))
-
         def to_python(self, value):
             raise NotImplemented
 
         def decode_to_object(self, obj, attr_name, value):
             raise NotImplemented
-        
+
+        def internal_type(self):
+            raise NotImplemented
+
+        def assert_type(self, var):
+            if not isinstance(var, self.internal_type()):
+                raise JSONAttributeError(
+                    'El atributo %s(%s) no es del tipo %s'
+                    % (self.name, str(var),str(self.internal_type())))
+
+        def set_name(self, name):
+            self.name = name
+            
 class JSONStringAttribute(JSONAttribute):
+    def internal_type(self):
+        return basestring
+    
     def default_value(self):
         return ''
 
     def to_python(self, value):
-        self._assert_attr_class(value, basestring)
+        self.assert_type(value)
         return unicode(value)
 
+    def to_dict_value(self, value):
+        self.assert_type(value)
+        return unicode(value)
+    
 class JSONIntegerAttribute(JSONAttribute):
     def default_value(self):
         return None
 
+    def internal_type(self):
+        return int
+
     def to_python(self, value):
-        self._assert_attr_class(value, int)
+        self.assert_type(value)
+        return value
+
+    def to_dict_value(self, value):
+        self.assert_type(value)
         return value
 
 class JSONObjectAttribute(JSONAttribute):
@@ -38,11 +59,18 @@ class JSONObjectAttribute(JSONAttribute):
     def default_value(self):
         return None
 
+    def internal_type(self):
+        return self.obj_class
+
     def to_python(self, value):
         o = self.obj_class()
         o.decode_dict(value)
         return o
     
+    def to_dict_value(self, value):
+        self.assert_type(value)
+        return value.build_dict()
+
 class JSONListAttribute(JSONAttribute):
     def __init__(self, list_class):
         self.list_class = list_class
@@ -50,9 +78,10 @@ class JSONListAttribute(JSONAttribute):
     def default_value(self):
         return None
 
-    def to_python(self, value):
-        self._assert_attr_class(value, list)
+    def internal_type(self):
+        return list
 
+    def to_python(self, value):
         new_list = []
 
         for e in value:
@@ -66,22 +95,10 @@ class JSONListAttribute(JSONAttribute):
 
         return new_list
 
+    def to_dict_value(self, value):
+        ret = []
+        
+        for e in value:
+            ret.append(e.build_dict())
 
-class JSONAttributes(UserDict):
-    def assert_exists(self, attr_name):
-        '''Obtiene un atributo json del objeto'''
-        try:
-            return self[attr_name]
-        except NameError:
-            raise JSONObjectError('El atributo %s no existe en el objeto' % attr_name)
-
-    def assert_class(self, attr_name, attr_cls):
-        '''Chequea el tipo del atributo.'''
-        self.assert_exists(attr_name)
-
-        if not isinstance(self[attr_name], attr_cls):
-            raise JSONObjectError('El atributo %s no es un '
-                    'atributo del tipo %s' % (attr_name, str(attr_cls)))
-
-    def is_class(self, attr_name, attr_cls):
-        return isinstance(self[attr_name], attr_cls)
+        return ret
