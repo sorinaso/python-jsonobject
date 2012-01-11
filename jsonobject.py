@@ -29,7 +29,7 @@ class JSONObject():
         al objeto.'''
         for k,v in self._json_attrs.items():
             try:
-                setattr(self, k , v.to_python(a_dict[k]))
+                setattr(self, k , v.to_object_attribute(a_dict[k]))
             except AttributeError:
                 raise JSONObjectError('El atributo json(%s) no existe '
                                       'en el objeto %s', (k, self.__dict__))

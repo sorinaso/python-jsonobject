@@ -4,15 +4,6 @@ class JSONAttributeError(Exception):
     pass
 
 class JSONAttribute(object):
-        def to_python(self, value):
-            raise NotImplemented
-
-        def decode_to_object(self, obj, attr_name, value):
-            raise NotImplemented
-
-        def internal_type(self):
-            raise NotImplemented
-
         def assert_type(self, var):
             if not isinstance(var, self.internal_type()):
                 raise JSONAttributeError(
@@ -21,7 +12,27 @@ class JSONAttribute(object):
 
         def set_name(self, name):
             self.name = name
-            
+
+        def internal_type(self):
+            '''Tipo interno del atributo.'''
+            raise NotImplemented
+
+        def default_value(self):
+            '''Valor default con el que se inicializan
+            los atributos del objeto de cada tipo.'''
+            raise NotImplemented
+
+        def to_object_attribute(self, value):
+            '''Convierte el valor pasado al valor que deberia
+            utilizarse en el atributo cuando se decodifica el
+            diccionario.'''
+            raise NotImplemented
+
+        def to_dict_value(self, value):
+            '''Convierte el valor pasado al valor que deberia
+            tenes en un diccionario para luego serializar a json.'''
+            raise NotImplemented
+
 class JSONStringAttribute(JSONAttribute):
     def internal_type(self):
         return basestring
@@ -29,7 +40,7 @@ class JSONStringAttribute(JSONAttribute):
     def default_value(self):
         return ''
 
-    def to_python(self, value):
+    def to_object_attribute(self, value):
         self.assert_type(value)
         return unicode(value)
 
@@ -44,7 +55,7 @@ class JSONIntegerAttribute(JSONAttribute):
     def internal_type(self):
         return int
 
-    def to_python(self, value):
+    def to_object_attribute(self, value):
         self.assert_type(value)
         return value
 
@@ -62,7 +73,7 @@ class JSONObjectAttribute(JSONAttribute):
     def internal_type(self):
         return self.obj_class
 
-    def to_python(self, value):
+    def to_object_attribute(self, value):
         o = self.obj_class()
         o.decode_dict(value)
         return o
@@ -81,7 +92,7 @@ class JSONListAttribute(JSONAttribute):
     def internal_type(self):
         return list
 
-    def to_python(self, value):
+    def to_object_attribute(self, value):
         new_list = []
 
         for e in value:
