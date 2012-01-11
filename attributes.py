@@ -9,43 +9,40 @@ class JSONAttribute(object):
             raise JSONAttributeError(
                 'El atributo %s no es del tipo %s' % (var,cls))
 
-    def _set_attr_to_object(self, obj, attr_name, value):
-        '''Obtiene un atributo json del objeto'''
-        try:
-            setattr(obj, attr_name, value)
-        except AttributeError:
-            raise JSONObjectError('El atributo %s no existe '
-                                  'en el objeto %s', (attr_name, obj.__dict__))
+        def to_python(self, value):
+            raise NotImplemented
 
-
+        def decode_to_object(self, obj, attr_name, value):
+            raise NotImplemented
+        
 class JSONStringAttribute(JSONAttribute):
-    def to_python(self):
+    def default_value(self):
         return ''
 
-    def decode_to_object(self, obj, attr_name, value):
+    def to_python(self, value):
         self._assert_attr_class(value, basestring)
-        self._set_attr_to_object(obj, attr_name, value)
+        return value
 
 class JSONObjectAttribute(JSONAttribute):
     def __init__(self, obj_class):
         self.obj_class = obj_class
 
-    def to_python(self):
+    def default_value(self):
         return None
 
-    def decode_to_object(self, obj, attr_name, value):
+    def to_python(self, value):
         o = self.obj_class()
         o.decode_dict(value)
-        self._set_attr_to_object(obj, attr_name, o)
-
+        return o
+    
 class JSONListAttribute(JSONAttribute):
     def __init__(self, list_class):
         self.list_class = list_class
 
-    def to_python(self):
+    def default_value(self):
         return None
 
-    def decode_to_object(self, obj, attr_name, value):
+    def to_python(self, value):
         self._assert_attr_class(value, list)
 
         new_list = []
@@ -59,7 +56,7 @@ class JSONListAttribute(JSONAttribute):
                 o.decode_dict(e)
                 new_list.append(o)
 
-        self._set_attr_to_object(obj, attr_name, new_list)
+        return new_list
 
 
 class JSONAttributes(UserDict):
