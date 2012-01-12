@@ -1,4 +1,3 @@
-import json
 import unittest
 from jsonobject import JSONObject, JSONStringAttribute, JSONListAttribute, JSONObjectAttribute
 
@@ -22,7 +21,7 @@ class TestOuter(JSONObject):
     obj1 = JSONObjectAttribute(obj_class=TestObj)
 
 class TestJSON(unittest.TestCase):
-    def test_metaclass(self):
+    def test_encode_and_decode(self):
         o = TestOuter()
         self.assertEqual(o.field1, '')
         self.assertIsInstance(o.field1, str)
@@ -65,7 +64,6 @@ class TestJSON(unittest.TestCase):
         o.decode(json_str)
         self._assert_decode(o)
         encoded_json = o.encode()
-
         o2 = TestOuter()
         o2.decode(encoded_json)
         self._assert_decode(o2)
@@ -79,6 +77,13 @@ class TestJSON(unittest.TestCase):
         self.assertEqual(o.list1[0].list2[1].field1, "o.list1[0].list2[1].field1")
         self.assertEqual(o.list1[0].list2[1].field1, "o.list1[0].list2[1].field1")
         self.assertEqual(o.obj1.field1, 'o.obj1.field1')
+
+    def assertIsInstance(self, obj, cls, msg=None):
+        """Same as self.assertTrue(isinstance(obj, cls)), with a nicer
+        default message."""
+        if not isinstance(obj, cls):
+            standardMsg = '%s is not an instance of %r' % (safe_repr(obj), cls)
+            self.fail(self._formatMessage(msg, standardMsg))
 
 if __name__ == '__main__':
     unittest.main()
