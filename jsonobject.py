@@ -38,6 +38,8 @@ class JSONObject():
         '''Decodifica un json al objeto.'''
         self.decode_dict(loads(json))
 
+        return self
+
     def build_dict(self):
         '''Convierte un diccionario para luego serializarlo a json.'''
         enc_dict = {}
