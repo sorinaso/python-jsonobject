@@ -43,11 +43,16 @@ class JSONObject():
         enc_dict = {}
 
         for k, v in self._json_attrs.items():
-            a = getattr(self, k)
-            enc_dict[k] = v.to_dict_value(a)
-            
-        return enc_dict
+            try:
+                a = getattr(self, k)
+                enc_dict[k] = v.to_dict_value(a)
+            except Exception as e:
+                raise JSONObjectError(
+                    '''Error codificando en json el atributo %s de la clase %s
+                    excepcion: %s''' % (k, self.__class__, e.message))
 
+        return enc_dict
+    
     def encode(self):
         '''Codifica el objeto a json.'''
         return dumps(self.build_dict())
