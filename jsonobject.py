@@ -30,9 +30,9 @@ class JSONObject():
         for k,v in self._json_attrs.items():
             try:
                 setattr(self, k , v.to_object_attribute(a_dict[k]))
-            except AttributeError:
-                raise JSONObjectError('El atributo json(%s) no existe '
-                                      'en el objeto %s', (k, self.__dict__))
+            except KeyError:
+                raise JSONObjectError('El atributo `%s` esta definido en el objeto '
+                                      'pero no en el json %s' % (k, a_dict))
 
     def decode(self, json):
         '''Decodifica un json al objeto.'''
@@ -45,13 +45,8 @@ class JSONObject():
         enc_dict = {}
 
         for k, v in self._json_attrs.items():
-            try:
-                a = getattr(self, k)
-                enc_dict[k] = v.to_dict_value(a)
-            except Exception as e:
-                raise JSONObjectError(
-                    '''Error codificando en json el atributo %s de la clase %s
-                    excepcion: %s''' % (k, self.__class__, e.message))
+            a = getattr(self, k)
+            enc_dict[k] = v.to_dict_value(a)
 
         return enc_dict
     
