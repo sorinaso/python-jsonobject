@@ -3,37 +3,49 @@ from utils import JSONObjectError
 class JSONAttributeError(Exception):
     pass
 
+attr_valid_kwargs = ['null']
+
 class JSONAttribute(object):
-        def assert_type(self, var):
-            if not isinstance(var, self.internal_type()):
-                raise JSONAttributeError(
-                    'El atributo %s(%s) no es del tipo %s'
-                    % (self.name, str(var),str(self.internal_type())))
+    def __init__(self, **kwargs):
+        self.null=False
+        
+        for k in kwargs:
+            if attr_valid_kwargs.count(k) > 0:
+                setattr(self, k, kwargs[k])
 
-        def set_name(self, name):
-            self.name = name
+    def assert_type(self, var):
+        if not isinstance(var, self.internal_type()) and not self.null:
+            raise JSONAttributeError(
+                'El atributo %s(%s) no es del tipo %s'
+                % (self.name, str(var),str(self.internal_type())))
 
-        def internal_type(self):
-            '''Tipo interno del atributo.'''
-            raise NotImplemented
+    def set_name(self, name):
+        self.name = name
 
-        def default_value(self):
-            '''Valor default con el que se inicializan
-            los atributos del objeto de cada tipo.'''
-            raise NotImplemented
+    def internal_type(self):
+        '''Tipo interno del atributo.'''
+        raise NotImplemented
 
-        def to_object_attribute(self, value):
-            '''Convierte el valor pasado al valor que deberia
-            utilizarse en el atributo cuando se decodifica el
-            diccionario.'''
-            raise NotImplemented
+    def default_value(self):
+        '''Valor default con el que se inicializan
+        los atributos del objeto de cada tipo.'''
+        raise NotImplemented
 
-        def to_dict_value(self, value):
-            '''Convierte el valor pasado al valor que deberia
-            tenes en un diccionario para luego serializar a json.'''
-            raise NotImplemented
+    def to_object_attribute(self, value):
+        '''Convierte el valor pasado al valor que deberia
+        utilizarse en el atributo cuando se decodifica el
+        diccionario.'''
+        raise NotImplemented
+
+    def to_dict_value(self, value):
+        '''Convierte el valor pasado al valor que deberia
+        tenes en un diccionario para luego serializar a json.'''
+        raise NotImplemented
 
 class JSONStringAttribute(JSONAttribute):
+    def __init__(self, **kwargs):
+        super(JSONStringAttribute, self).__init__(**kwargs)
+
     def internal_type(self):
         return basestring
     
@@ -49,6 +61,9 @@ class JSONStringAttribute(JSONAttribute):
         return unicode(value)
     
 class JSONIntegerAttribute(JSONAttribute):
+    def __init__(self, **kwargs):
+        super(JSONIntegerAttribute, self).__init__(**kwargs)
+
     def default_value(self):
         return None
 
@@ -63,9 +78,22 @@ class JSONIntegerAttribute(JSONAttribute):
         self.assert_type(value)
         return value
 
+
+class JSONIntegerAttribute(JSONAttribute):
+    def __init__(self, **kwargs):
+        super(JSONIntegerAttribute, self).__init__(**kwargs)
+
+    def default_value(self):
+        return None
+
+    def internal_type(self):
+        return bool
+
+
 class JSONObjectAttribute(JSONAttribute):
-    def __init__(self, obj_class):
+    def __init__(self, obj_class, **kwargs):
         self.obj_class = obj_class
+        super(JSONObjectAttribute, self).__init__(**kwargs)
 
     def default_value(self):
         return None
@@ -83,7 +111,8 @@ class JSONObjectAttribute(JSONAttribute):
         return value.build_dict()
 
 class JSONListAttribute(JSONAttribute):
-    def __init__(self, list_class):
+    def __init__(self, list_class, **kwargs):
+        super(JSONListAttribute, self).__init__(**kwargs)
         self.list_class = list_class
 
     def default_value(self):
