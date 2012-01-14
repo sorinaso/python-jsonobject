@@ -17,7 +17,8 @@ class JSONAttribute(object):
                 setattr(self, k, kwargs[k])
 
     def assert_type(self, var):
-        if not isinstance(var, self.internal_type()) and not self.null:
+        if not isinstance(var, self.internal_type()) and \
+           not (self.null and var is None):
             raise JSONAttributeError(
                 'El atributo %s(%s) no es del tipo %s'
                 % (self.name, str(var),str(self.internal_type())))
