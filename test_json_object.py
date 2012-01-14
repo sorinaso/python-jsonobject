@@ -31,10 +31,10 @@ class TestJSON(unittest.TestCase):
         self.assertIsInstance(o.field2, str)
         self.assertIsInstance(o._json_attrs['field2'], JSONStringAttribute)
 
-        self.assertIs(o.list1, None)
+        self.assertEquals(o.list1, None)
         self.assertIsInstance(o._json_attrs['list1'], JSONListAttribute)
 
-        self.assertIs(o.obj1, None)
+        self.assertEquals(o.obj1, None)
         self.assertIsInstance(o._json_attrs['obj1'], JSONObjectAttribute)
 
     def test_decode(self):
