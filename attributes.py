@@ -6,8 +6,11 @@ class JSONAttributeError(Exception):
 attr_valid_kwargs = ['null']
 
 class JSONAttribute(object):
+    class Defaults:
+        null = False
+        
     def __init__(self, **kwargs):
-        self.null=False
+        self.null=self.Defaults.null
         
         for k in kwargs:
             if attr_valid_kwargs.count(k) > 0:
@@ -42,6 +45,20 @@ class JSONAttribute(object):
         tenes en un diccionario para luego serializar a json.'''
         raise NotImplemented
 
+class JSONBasePrimitiveTypeAttribute(JSONAttribute):
+    '''Clase base para los atributos primitivos define la operativa
+    basica para ellos.'''
+    def default_value(self):
+        return None
+
+    def to_object_attribute(self, value):
+        self.assert_type(value)
+        return value
+
+    def to_dict_value(self, value):
+        self.assert_type(value)
+        return value
+
 class JSONStringAttribute(JSONAttribute):
     def __init__(self, **kwargs):
         super(JSONStringAttribute, self).__init__(**kwargs)
@@ -60,35 +77,19 @@ class JSONStringAttribute(JSONAttribute):
         self.assert_type(value)
         return unicode(value)
     
-class JSONIntegerAttribute(JSONAttribute):
+class JSONIntegerAttribute(JSONBasePrimitiveTypeAttribute):
     def __init__(self, **kwargs):
         super(JSONIntegerAttribute, self).__init__(**kwargs)
-
-    def default_value(self):
-        return None
 
     def internal_type(self):
         return int
 
-    def to_object_attribute(self, value):
-        self.assert_type(value)
-        return value
-
-    def to_dict_value(self, value):
-        self.assert_type(value)
-        return value
-
-
-class JSONIntegerAttribute(JSONAttribute):
+class JSONBooleanAttribute(JSONBasePrimitiveTypeAttribute):
     def __init__(self, **kwargs):
-        super(JSONIntegerAttribute, self).__init__(**kwargs)
-
-    def default_value(self):
-        return None
+        super(JSONBooleanAttribute, self).__init__(**kwargs)
 
     def internal_type(self):
         return bool
-
 
 class JSONObjectAttribute(JSONAttribute):
     def __init__(self, obj_class, **kwargs):
