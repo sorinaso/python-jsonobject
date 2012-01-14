@@ -31,8 +31,9 @@ class JSONObject():
             try:
                 setattr(self, k , v.to_object_attribute(a_dict[k]))
             except KeyError:
-                raise JSONObjectError('El atributo `%s` esta definido en el objeto '
-                                      'pero no en el json %s' % (k, a_dict))
+                raise JSONObjectError(
+                    'El atributo `%s` esta definido en el objeto '
+                    'pero no en el json %s' % (k, a_dict))
 
     def decode(self, json):
         '''Decodifica un json al objeto.'''
