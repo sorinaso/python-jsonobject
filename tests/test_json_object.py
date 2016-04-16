@@ -1,24 +1,29 @@
 import unittest
 from jsonobject import JSONObject, JSONStringAttribute, JSONListAttribute, JSONObjectAttribute
 
+
 class TestObj(JSONObject):
     field1 = JSONStringAttribute()
     
+
 class TestInnerInner(JSONObject):
     field1 = JSONStringAttribute()
     field2 = JSONStringAttribute()
+
 
 class TestInner(JSONObject):
     field1 = JSONStringAttribute()
 
     list2 = JSONListAttribute(list_class=TestInnerInner)
     
+
 class TestOuter(JSONObject):
     field1 = JSONStringAttribute()
     field2 = JSONStringAttribute()
 
     list1 = JSONListAttribute(list_class=TestInner)
     obj1 = JSONObjectAttribute(obj_class=TestObj)
+
 
 class TestJSON(unittest.TestCase):
     def test_encode_and_decode(self):

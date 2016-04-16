@@ -1,6 +1,7 @@
 import unittest
-from attributes import JSONStringAttribute, JSONIntegerAttribute, JSONAttributeError, JSONBooleanAttribute
+from jsonobject.attributes import JSONStringAttribute, JSONIntegerAttribute, JSONAttributeError, JSONBooleanAttribute
 from jsonobject import JSONObject
+
 
 class TestJSONAttributes(unittest.TestCase):
     def test_int(self):

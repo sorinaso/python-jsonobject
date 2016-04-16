@@ -1,6 +1,10 @@
 from json import loads, dumps
 from attributes import *
 
+__version__ = '0.0.1'
+__author__ = 'Alejandro Souto'
+
+
 class JSONObjectBuilder(type):
     """
     A metaclass to normalize arguments give to the get_db_prep_* and db_type
@@ -21,7 +25,7 @@ class JSONObjectBuilder(type):
         return new_cls
 
 
-class JSONObject():
+class JSONObject:
     __metaclass__ = JSONObjectBuilder
 
     def decode_dict(self, a_dict):
