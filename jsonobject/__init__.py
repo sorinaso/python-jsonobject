@@ -1,7 +1,7 @@
 from json import loads, dumps
 from attributes import *
 
-__version__ = '0.0.1'
+__version__ = '0.0.3'
 __author__ = 'Alejandro Souto'
 
 
