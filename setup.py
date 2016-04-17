@@ -1,10 +1,15 @@
 from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
-import sys, os
+import codecs
+
 
 PACKAGES = ['jsonobject']
 
 REQUIREMENTS = []
+
+
+def long_description():
+    with codecs.open('README.rst', encoding='utf8') as f:
+        return f.read()
 
 version = __import__('jsonobject').__version__
 
@@ -12,6 +17,7 @@ setup(
       name='python-jsonobject',
       version=version,
       description="Json to object convertion with field type validations",
+      long_description=long_description(),
       classifiers=[
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
