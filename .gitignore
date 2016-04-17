@@ -1,0 +1,8 @@
+build
+dist
+.cache
+.tox
+.idea
+*egg*
+*.pyc
+__pycache__
